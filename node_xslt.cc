@@ -32,7 +32,7 @@ void jsXsltStylesheetCleanup(Persistent<Value> value, void *) {
 
 OBJECT(jsXmlDoc, 1, xmlDocPtr doc)
     INTERNAL(0, doc)
-    OBJ_DESTRUCTOR(&jsXmlDocCleanup)
+    //OBJ_DESTRUCTOR(&jsXmlDocCleanup)
     RETURN_SCOPED(self);
 END
 
@@ -183,6 +183,15 @@ FUNCTION(transform)
     }
 END
 
+FUNCTION(freeXmlDoc)
+    ARG_COUNT(1)
+    ARG_obj(objDocument, 0)
+
+    EXTERNAL(xmlDocPtr, document, objDocument, 0);
+
+    xmlFreeDoc(document);
+END
+
 extern "C" void init(Handle<Object> target)
 {
     HandleScope scope;
@@ -197,6 +206,7 @@ extern "C" void init(Handle<Object> target)
     BIND("readXsltString", readXsltString);
     BIND("readXsltFile", readXsltFile);
     BIND("transform", transform);
+    BIND("freeXmlDoc", freeXmlDoc);
 }
 
 NODE_MODULE(node_xslt, init)
